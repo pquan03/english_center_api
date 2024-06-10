@@ -85,7 +85,10 @@ INSERT INTO Teacher (id, full_name, user_name, password, phone) VALUES
 -- Inserting data into Class
 INSERT INTO Class (id, class_name, year, teacher_id) VALUES 
 ('class1', 'Math 101', 2024, 'teacher1'),
-('class2', 'Science 101', 2024, 'teacher2');
+('class2', 'Science 101', 2024, 'teacher2'),
+('class3', 'English 101', 2024, 'teacher1'),
+('class4', 'History 101', 2024, 'teacher2'),
+('class5', 'Art 101', 2024, 'teacher1');
 
 -- Inserting data into Student
 INSERT INTO Student (id, full_name, user_name, password, class_id) VALUES 

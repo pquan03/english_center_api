@@ -18,7 +18,18 @@ export default {
     },
     getClasses: async (req: Request, res: Response) => {
         try {
-            const classes = await Class.findAll();
+            const classes = await Class.findAll({
+                include: [
+                    {
+                        model: Teacher,
+                        attributes: ['full_name'],
+                    },
+                    {
+                        model: Student,
+                        attributes: ['full_name'],
+                    }
+                ]
+            });
             res.status(200).json(classes);
         } catch(e: any) {
             res.status(500).json({ message: e.message });

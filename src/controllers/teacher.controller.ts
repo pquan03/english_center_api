@@ -26,6 +26,14 @@ export default {
             res.status(500).json({ message: e.message });
         }
     },
+    getTeachersName: async (req: Request, res: Response) => {   
+        try {
+            const teachers = await Teacher.findAll({ attributes: ['id', 'full_name'] });
+            res.status(200).json(teachers);
+        } catch(e: any) {
+            res.status(500).json({ message: e.message });
+        }
+    },
     getTeacherById: async (req: Request, res: Response) => {
         const { id } = req.params;
         try {

@@ -23,7 +23,7 @@ export default {
     }, 
     login: async (req: Request, res: Response) => {
         const { user_name, password, user_type } = req.body;
-
+        console.log(req.body)
         let User;
 
         switch (user_type) {

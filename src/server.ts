@@ -24,6 +24,7 @@ app.use(morgan('dev'));
 app.use('/api/auth', routes.authRoute);
 app.use('/api/student', routes.studentRoute);
 app.use('/api/class', routes.classRoute);
+app.use('/api/teacher', routes.teacherRoute);
 
 
 
