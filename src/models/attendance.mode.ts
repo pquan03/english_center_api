@@ -10,7 +10,7 @@ import sequelize from "../config/db";
 //     FOREIGN KEY (enrollment_id) REFERENCES Enrollment(id)
 // );
 
-const Attendance = sequelize.define('Attendance', {
+const Attendance = sequelize.define('attendance', {
     id: {
         type: DataTypes.CHAR(50),
         primaryKey: true
@@ -18,7 +18,7 @@ const Attendance = sequelize.define('Attendance', {
       enrollment_id: {
         type: DataTypes.CHAR(50),
         references: {
-          model: 'Enrollment',
+          model: 'enrollment',
           key: 'id'
         }
       },
@@ -30,7 +30,7 @@ const Attendance = sequelize.define('Attendance', {
         defaultValue: true
       }
 }, {
-    tableName: 'Attendance',
+    tableName: 'attendance',
     timestamps: false
 });
 

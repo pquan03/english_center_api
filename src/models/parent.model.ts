@@ -10,7 +10,7 @@ import sequelize from "../config/db";
 //     FOREIGN KEY (enrollment_id) REFERENCES Enrollment(id)
 // );
 
-const Parent = sequelize.define('Parent', {
+const Parent = sequelize.define('parent', {
     id: {
         type: DataTypes.CHAR(50),
         primaryKey: true
@@ -31,7 +31,7 @@ const Parent = sequelize.define('Parent', {
       student_id: {
         type: DataTypes.CHAR(50),
         references: {
-          model: 'Student',
+          model: 'student',
           key: 'id'
         }
       },
@@ -39,7 +39,7 @@ const Parent = sequelize.define('Parent', {
         type: DataTypes.STRING(20)
       }
 }, {
-    tableName: 'Parent',
+    tableName: 'parent',
     timestamps: false
 });
 

@@ -25,13 +25,21 @@ const Class = sequelize.define('Class', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    monthly_tuition_fee: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    expected_lessons: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
     teacher_id: {
         type: DataTypes.STRING,
         references: {
-            model: 'Teacher',
+            model: 'teacher',
             key: 'id'
         }
-    }
+    },
 }, {
     tableName: 'Class',
     timestamps: false

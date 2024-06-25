@@ -10,10 +10,18 @@ CREATE TABLE IF NOT EXISTS Admin (
 
 CREATE TABLE IF NOT EXISTS Teacher (
     id CHAR(50) PRIMARY KEY,
-    full_name VARCHAR(100) NOT NULL,
-    user_name VARCHAR(100) UNIQUE NOT NULL,
-    password varchar(255) not null,
-    phone VARCHAR(20)
+    gender VARCHAR(10) NOT NULL,
+    -- picture Text
+    mobile_phone varchar(10),
+    monthly_salary DECIMAL(10,2),
+    home_address varchar(50),
+    account_status BOOLEAN DEFAULT 1,
+    full_name VARCHAR(50) NOT NULL,
+    date_of_birth DATE,
+    email VARCHAR(50) UNIQUE,
+    employee_role VARCHAR(50),
+    user_name VARCHAR(50) UNIQUE NOT NULL, 
+    password VARCHAR(100) NOT NULL
 );
 
 
@@ -22,6 +30,8 @@ CREATE TABLE IF NOT EXISTS Class (
     class_name VARCHAR(50) NOT NULL,
     year INT NOT NULL,
     teacher_id CHAR(50),
+    monthly_tuition_fee DECIMAL(10,2),
+    expected_lessons INT,
     FOREIGN KEY (teacher_id) REFERENCES Teacher(id)
 );
 
@@ -70,30 +80,44 @@ CREATE TABLE IF NOT EXISTS Payment (
     FOREIGN KEY (enrollment_id) REFERENCES Enrollment(id)
 );
 
+create table if not exists Announcement(
+    id char(50) PRIMARY key,
+    course_name varchar(50) not null,
+    day_of_the_week varchar(50) not null,
+    start_time varchar(50) not null,
+    end_time varchar(50) not null, 
+    start_date varchar(50) not null
+);
+
 
 -- INSERT DATA
 -- Inserting data into Admin
 INSERT INTO Admin (id, user_name, password) VALUES 
-('admin1', 'adminuser1', 'password123'),
-('admin2', 'adminuser2', 'password456');
+('admin1', 'adminuser1', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
+('admin2', 'adminuser2', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy');
 
 -- Inserting data into Teacher
-INSERT INTO Teacher (id, full_name, user_name, password, phone) VALUES 
-('teacher1', 'John Doe', 'johndoe', 'passjohn', '1234567890'),
-('teacher2', 'Jane Smith', 'janesmith', 'passjane', '0987654321');
+INSERT INTO Teacher (id, gender, mobile_phone, monthly_salary, home_address, account_status, full_name, date_of_birth, email, employee_role, user_name, password) VALUES
+('T001', 'Male', '1234567890', 4500.00, '123 Elm St', TRUE, 'John Doe', '1985-06-15', 'john.doe@example.com', 'Mathematics Teacher', 'johndoe', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
+('T002', 'Female', '0987654321', 4700.00, '456 Maple Ave', TRUE, 'Jane Smith', '1990-04-22', 'jane.smith@example.com', 'Science Teacher', 'janesmith', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
+('T003', 'Male', '1112223333', 5000.00, '789 Oak Blvd', TRUE, 'Mike Johnson', '1982-11-30', 'mike.johnson@example.com', 'History Teacher', 'mikejohnson', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
+('T004', 'Female', '4445556666', 4800.00, '101 Pine Ln', TRUE, 'Emily Davis', '1978-02-14', 'emily.davis@example.com', 'English Teacher', 'emilydavis', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
+('T005', 'Male', '7778889999', 4600.00, '202 Birch Rd', TRUE, 'Robert Brown', '1988-08-08', 'robert.brown@example.com', 'Physical Education Teacher', 'robertbrown', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy');
+
 
 -- Inserting data into Class
-INSERT INTO Class (id, class_name, year, teacher_id) VALUES 
-('class1', 'Math 101', 2024, 'teacher1'),
-('class2', 'Science 101', 2024, 'teacher2'),
-('class3', 'English 101', 2024, 'teacher1'),
-('class4', 'History 101', 2024, 'teacher2'),
-('class5', 'Art 101', 2024, 'teacher1');
+INSERT INTO Class (id, class_name, year, teacher_id, monthly_tuition_fee, expected_lessons) VALUES
+('C001', 'Mathematics 101', 2023, 'T001', 300.00, 20),
+('C002', 'Biology 201', 2023, 'T002', 320.00, 18),
+('C003', 'History 101', 2023, 'T003', 280.00, 22),
+('C004', 'English Literature 101', 2023, 'T004', 290.00, 21),
+('C005', 'Physical Education 101', 2023, 'T005', 260.00, 24);
+
 
 -- Inserting data into Student
 INSERT INTO Student (id, full_name, user_name, password, class_id) VALUES 
-('student1', 'Alice Johnson', 'alicej', 'passalice', 'class1'),
-('student2', 'Bob Brown', 'bobb', 'passbob', 'class2');
+('student1', 'Alice Johnson', 'alicej', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy', 'class1'),
+('student2', 'Bob Brown', 'bobb', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy', 'class2');
 
 -- Inserting data into Parent
 INSERT INTO Parent (id, full_name, email, user_name, student_id, phone) VALUES 

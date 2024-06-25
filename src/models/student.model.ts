@@ -5,7 +5,7 @@ import Parent from "./parent.model";
 
 
 
-const Student = sequelize.define('Student', {
+const Student = sequelize.define('student', {
     id: {
         type: DataTypes.CHAR(50),
         primaryKey: true
@@ -26,12 +26,12 @@ const Student = sequelize.define('Student', {
       class_id: {
         type: DataTypes.CHAR(50),
         references: {
-          model: 'Class',
+          model: 'class',
           key: 'id'
         }
       }
 }, {
-    tableName: 'Student',
+    tableName: 'student',
     timestamps: false
 });
 

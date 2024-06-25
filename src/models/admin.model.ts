@@ -8,7 +8,7 @@ import sequelize from "../config/db";
 // );
 
 
-const Admin = sequelize.define('Admin', {
+const Admin = sequelize.define('admin', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
@@ -23,7 +23,7 @@ const Admin = sequelize.define('Admin', {
         allowNull: false
     }
 }, { 
-    tableName: 'Admin',
+    tableName: 'admin',
     timestamps: false
 });
 

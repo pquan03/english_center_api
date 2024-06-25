@@ -8,7 +8,7 @@ router.route('/')
 
 
 router.route('/:id')
-    // .patch(classController.updateClass);
+    .patch(classController.updateClass)
     .get(classController.getClassById)
     .delete(classController.deleteClass)
 

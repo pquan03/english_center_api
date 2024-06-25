@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import sequelize from "../config/db";
 
 
-const Payment = sequelize.define('Payment', {
+const Payment = sequelize.define('payment', {
     id: {
         type: DataTypes.CHAR(50),
         primaryKey: true
@@ -10,7 +10,7 @@ const Payment = sequelize.define('Payment', {
     enrollment_id: {
         type: DataTypes.CHAR(50),
         references: {
-            model: 'Enrollment',
+            model: 'enrollment',
             key: 'id'
         }
     },
@@ -22,7 +22,7 @@ const Payment = sequelize.define('Payment', {
         type: DataTypes.DATE
     }
 }, {
-    tableName: 'Payment',
+    tableName: 'payment',
     timestamps: false
 });
 

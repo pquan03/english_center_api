@@ -11,7 +11,7 @@ import sequelize from "../config/db";
 // );
 
 
-const Enrollment = sequelize.define('Enrollment', {
+const Enrollment = sequelize.define('enrollment', {
     id: {
         type: DataTypes.CHAR(50),
         primaryKey: true
@@ -19,15 +19,15 @@ const Enrollment = sequelize.define('Enrollment', {
       student_id: {
         type: DataTypes.CHAR(50),
         references: {
-          model: 'Student',
+          model: 'student',
           key: 'id'
         }
       },
       class_id: {
         type: DataTypes.CHAR(50),
         references: {
-          model: 'Class',
-          key: 'id'
+          model: 'class',
+          key: 'id', 
         }
       },
       enrollment_date: {
@@ -35,7 +35,7 @@ const Enrollment = sequelize.define('Enrollment', {
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       }
 }, {
-    tableName: 'Enrollment',
+    tableName: 'enrollment',
     timestamps: false
 });
 
