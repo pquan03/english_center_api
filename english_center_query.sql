@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS Admin (
 CREATE TABLE IF NOT EXISTS Teacher (
     id CHAR(50) PRIMARY KEY,
     gender VARCHAR(10) NOT NULL,
-    -- picture Text
+    picture blob,
     mobile_phone varchar(10),
     monthly_salary DECIMAL(10,2),
     home_address varchar(50),
@@ -116,8 +116,28 @@ INSERT INTO Class (id, class_name, year, teacher_id, monthly_tuition_fee, expect
 
 -- Inserting data into Student
 INSERT INTO Student (id, full_name, user_name, password, class_id) VALUES 
-('student1', 'Alice Johnson', 'alicej', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy', 'class1'),
-('student2', 'Bob Brown', 'bobb', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy', 'class2');
+INSERT INTO Student (id, full_name, user_name, password, class_id) VALUES 
+('S1', 'Alice Johnson', 'alice.johnson', 'password1', 'C001'),
+('S2', 'Bob Smith', 'bob.smith', 'password2', 'C001'),
+('S3', 'Charlie Brown', 'charlie.brown', 'password3', 'C002'),
+('S4', 'Diana Prince', 'diana.prince', 'password4', 'C002'),
+('S5', 'Eve Adams', 'eve.adams', 'password5', 'C003'),
+('S6', 'Frank Castle', 'frank.castle', 'password6', 'C003'),
+('S7', 'Grace Hopper', 'grace.hopper', 'password7', 'C004'),
+('S8', 'Hank Pym', 'hank.pym', 'password8', 'C002'),
+('S9', 'Ivy Green', 'ivy.green', 'password9', 'C003'),
+('S10', 'Jack Sparrow', 'jack.sparrow', 'password10', 'C001'),
+('S11', 'Karen Page', 'karen.page', 'password11', 'C002'),
+('S12', 'Liam Neeson', 'liam.neeson', 'password12', 'C003'),
+('S13', 'Maya Lopez', 'maya.lopez', 'password13', 'C004'),
+('S14', 'Nick Fury', 'nick.fury', 'password14', 'C002'),
+('S15', 'Oscar Isaac', 'oscar.isaac', 'password15', 'C003'),
+('S16', 'Paul Rudd', 'paul.rudd', 'password16', 'C001'),
+('S17', 'Quinn Hughes', 'quinn.hughes', 'password17', 'C002'),
+('S18', 'Rachel Weisz', 'rachel.weisz', 'password18', 'C003'),
+('S19', 'Steve Rogers', 'steve.rogers', 'password19', 'C001'),
+('S20', 'Tony Stark', 'tony.stark', 'password20', 'C002');
+
 
 -- Inserting data into Parent
 INSERT INTO Parent (id, full_name, email, user_name, student_id, phone) VALUES 
@@ -140,6 +160,9 @@ INSERT INTO Payment (id, enrollment_id, amount, payment_date) VALUES
 ('payment2', 'enrollment2', 150.00, '2024-01-03');
 
 
+INSERT INTO Announcement (id, course_name, day_of_the_week, start_time, end_time, start_date)
+VALUES
+('1', 'Introduction to MySQL', 'Monday', '09:00 AM', '10:30 AM', '2024-09-01'),
 
 
 -- QUERY DATA

@@ -29,7 +29,8 @@ app.use('/api/auth', routes.authRoute);
 app.use('/api/student', routes.studentRoute);
 app.use('/api/class', routes.classRoute);
 app.use('/api/teacher', routes.teacherRoute);
-
+app.use('/api/dashboard', routes.dashboardRoute);
+app.use('/api/announcement', routes.announcementRoute);
 
 
 // Start the server and listen on the specified port
