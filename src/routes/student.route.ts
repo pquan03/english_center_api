@@ -6,7 +6,10 @@ router.route('/')
     .post(studentController.createStudent)
     .get(studentController.getAllStudents);
 
-router.get('/:id', studentController.getStudentById);
+router.route('/:id')
+    .get(studentController.getStudentById)
+    .patch(studentController.updateStudent)
+    .delete(studentController.deleteStudent);
 
 
 export default router;

@@ -8,20 +8,34 @@ CREATE TABLE IF NOT EXISTS Admin (
     password VARCHAR(255) NOT NULL
 );
 
+create table if not exists account(
+    id char(50) primary key,
+    user_name varchar(50) unique not null,
+    password varchar(255) not null,
+    user_type varchar(50) not null
+);
+
 CREATE TABLE IF NOT EXISTS Teacher (
     id CHAR(50) PRIMARY KEY,
     gender VARCHAR(10) NOT NULL,
-    picture blob,
     mobile_phone varchar(10),
-    monthly_salary DECIMAL(10,2),
+    monthly_salary float(10,2),
     home_address varchar(50),
     account_status BOOLEAN DEFAULT 1,
     full_name VARCHAR(50) NOT NULL,
     date_of_birth DATE,
     email VARCHAR(50) UNIQUE,
     employee_role VARCHAR(50),
-    user_name VARCHAR(50) UNIQUE NOT NULL, 
-    password VARCHAR(100) NOT NULL
+    account_id char(50),
+    foreign key (account_id) references account(id)
+);
+
+create table if not exists teacher_paid(
+    id char(50) primary key,
+    teacher_id char(50),
+    paid_date date,
+    amount float(10,2),
+    foreign key (teacher_id) references Teacher(id)
 );
 
 
@@ -30,17 +44,30 @@ CREATE TABLE IF NOT EXISTS Class (
     class_name VARCHAR(50) NOT NULL,
     year INT NOT NULL,
     teacher_id CHAR(50),
-    monthly_tuition_fee DECIMAL(10,2),
+    monthly_tuition_fee float(10,2),
+    time VARCHAR(50),
     expected_lessons INT,
     FOREIGN KEY (teacher_id) REFERENCES Teacher(id)
+);
+
+create table if not exists class_completed_lesson(
+    id char(50) primary key,
+    class_id char(50),
+    lesson_number int,
+    foreign key (class_id) references Class(id)
 );
 
 CREATE TABLE IF NOT EXISTS Student (
     id CHAR(50) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
-	user_name VARCHAR(100) UNIQUE NOT NULL,
-	password varchar(255) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100) UNIQUE,
+    gender VARCHAR(10),
     class_id CHAR(50),
+    date_of_birth DATETIME,
+    date_joined DATETIME,
+    account_id char(50),
+    foreign key (account_id) references account(id),
     FOREIGN KEY (class_id) REFERENCES Class(id)
 );
 
@@ -48,9 +75,11 @@ CREATE TABLE IF NOT EXISTS Parent (
     id CHAR(50) PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE,
-    user_name VARCHAR(100) UNIQUE NOT NULL,
-    student_id CHAR(50),
     phone VARCHAR(20),
+    gender VARCHAR(10),
+    student_id CHAR(50),
+    account_id char(50),
+    foreign key (account_id) references account(id),
     FOREIGN KEY (student_id) REFERENCES Student(id)
 );
 
@@ -75,9 +104,19 @@ CREATE TABLE IF NOT EXISTS Attendance (
 CREATE TABLE IF NOT EXISTS Payment (
     id CHAR(50) PRIMARY KEY,
     enrollment_id CHAR(50),
-    amount DECIMAL(10,2) NOT NULL,
-    payment_date DATE,
+    amount float(10,2) NOT NULL,
+    percentage_discount int,
     FOREIGN KEY (enrollment_id) REFERENCES Enrollment(id)
+);
+
+create table if not exists payment_history(
+    id char(50) primary key,
+    payment_date date,
+    amount float(10,2),
+    payment_id char(50),
+    parent_id char(50),
+    foreign key (parent_id) references Parent(id),
+    foreign key (payment_id) references Payment(id)
 );
 
 create table if not exists Announcement(
@@ -90,79 +129,9 @@ create table if not exists Announcement(
 );
 
 
--- INSERT DATA
--- Inserting data into Admin
-INSERT INTO Admin (id, user_name, password) VALUES 
-('admin1', 'adminuser1', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
-('admin2', 'adminuser2', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy');
-
--- Inserting data into Teacher
-INSERT INTO Teacher (id, gender, mobile_phone, monthly_salary, home_address, account_status, full_name, date_of_birth, email, employee_role, user_name, password) VALUES
-('T001', 'Male', '1234567890', 4500.00, '123 Elm St', TRUE, 'John Doe', '1985-06-15', 'john.doe@example.com', 'Mathematics Teacher', 'johndoe', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
-('T002', 'Female', '0987654321', 4700.00, '456 Maple Ave', TRUE, 'Jane Smith', '1990-04-22', 'jane.smith@example.com', 'Science Teacher', 'janesmith', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
-('T003', 'Male', '1112223333', 5000.00, '789 Oak Blvd', TRUE, 'Mike Johnson', '1982-11-30', 'mike.johnson@example.com', 'History Teacher', 'mikejohnson', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
-('T004', 'Female', '4445556666', 4800.00, '101 Pine Ln', TRUE, 'Emily Davis', '1978-02-14', 'emily.davis@example.com', 'English Teacher', 'emilydavis', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy'),
-('T005', 'Male', '7778889999', 4600.00, '202 Birch Rd', TRUE, 'Robert Brown', '1988-08-08', 'robert.brown@example.com', 'Physical Education Teacher', 'robertbrown', '$2b$10$.XODso0FsQuv5bwlQecYcuaUioMZSwn8D1K.S07M4cyBjiTDieJgy');
 
 
--- Inserting data into Class
-INSERT INTO Class (id, class_name, year, teacher_id, monthly_tuition_fee, expected_lessons) VALUES
-('C001', 'Mathematics 101', 2023, 'T001', 300.00, 20),
-('C002', 'Biology 201', 2023, 'T002', 320.00, 18),
-('C003', 'History 101', 2023, 'T003', 280.00, 22),
-('C004', 'English Literature 101', 2023, 'T004', 290.00, 21),
-('C005', 'Physical Education 101', 2023, 'T005', 260.00, 24);
 
-
--- Inserting data into Student
-INSERT INTO Student (id, full_name, user_name, password, class_id) VALUES 
-INSERT INTO Student (id, full_name, user_name, password, class_id) VALUES 
-('S1', 'Alice Johnson', 'alice.johnson', 'password1', 'C001'),
-('S2', 'Bob Smith', 'bob.smith', 'password2', 'C001'),
-('S3', 'Charlie Brown', 'charlie.brown', 'password3', 'C002'),
-('S4', 'Diana Prince', 'diana.prince', 'password4', 'C002'),
-('S5', 'Eve Adams', 'eve.adams', 'password5', 'C003'),
-('S6', 'Frank Castle', 'frank.castle', 'password6', 'C003'),
-('S7', 'Grace Hopper', 'grace.hopper', 'password7', 'C004'),
-('S8', 'Hank Pym', 'hank.pym', 'password8', 'C002'),
-('S9', 'Ivy Green', 'ivy.green', 'password9', 'C003'),
-('S10', 'Jack Sparrow', 'jack.sparrow', 'password10', 'C001'),
-('S11', 'Karen Page', 'karen.page', 'password11', 'C002'),
-('S12', 'Liam Neeson', 'liam.neeson', 'password12', 'C003'),
-('S13', 'Maya Lopez', 'maya.lopez', 'password13', 'C004'),
-('S14', 'Nick Fury', 'nick.fury', 'password14', 'C002'),
-('S15', 'Oscar Isaac', 'oscar.isaac', 'password15', 'C003'),
-('S16', 'Paul Rudd', 'paul.rudd', 'password16', 'C001'),
-('S17', 'Quinn Hughes', 'quinn.hughes', 'password17', 'C002'),
-('S18', 'Rachel Weisz', 'rachel.weisz', 'password18', 'C003'),
-('S19', 'Steve Rogers', 'steve.rogers', 'password19', 'C001'),
-('S20', 'Tony Stark', 'tony.stark', 'password20', 'C002');
-
-
--- Inserting data into Parent
-INSERT INTO Parent (id, full_name, email, user_name, student_id, phone) VALUES 
-('parent1', 'Mr. Johnson', 'johnson@example.com', 'mrjohnson', 'student1', '1112223333'),
-('parent2', 'Mrs. Brown', 'brown@example.com', 'mrsbrown', 'student2', '4445556666');
-
--- Inserting data into Enrollment
-INSERT INTO Enrollment (id, student_id, class_id) VALUES 
-('enrollment1', 'student1', 'class1'),
-('enrollment2', 'student2', 'class2');
-
--- Inserting data into Attendance
-INSERT INTO Attendance (id, enrollment_id, attendance_date, is_present) VALUES 
-('attendance1', 'enrollment1', '2024-01-01', 1),
-('attendance2', 'enrollment2', '2024-01-01', 0);
-
--- Inserting data into Payment
-INSERT INTO Payment (id, enrollment_id, amount, payment_date) VALUES 
-('payment1', 'enrollment1', 100.00, '2024-01-02'),
-('payment2', 'enrollment2', 150.00, '2024-01-03');
-
-
-INSERT INTO Announcement (id, course_name, day_of_the_week, start_time, end_time, start_date)
-VALUES
-('1', 'Introduction to MySQL', 'Monday', '09:00 AM', '10:30 AM', '2024-09-01'),
 
 
 -- QUERY DATA
@@ -190,49 +159,27 @@ SELECT * FROM Attendance;
 
 -- Select data from Payment table
 SELECT * FROM Payment;
+-- Select data from teacher paid table
+SELECT * FROM teacher_paid;
+-- Select data from class_completed_lesson table
+SELECT * FROM class_completed_lesson;
+-- Select data from payment_history table   
+SELECT * FROM payment_history;
 
-
-
-
-select * from Admin;
-SELECT `admin_id`, `username`, `password` FROM `Admin` AS `Admin` WHERE `Admin`.`username` = 'admin1' AND `Admin`.`password` = 'admin1';
-
--- Retrieve the names of all classes and their respective teachers:
-SELECT c.class_name, t.full_name AS teacher_name
-FROM Class c
-JOIN Teacher t ON c.teacher_id = t.teacher_id;
-
--- Retrieve the full names and usernames of all Studentstudents along with the names of their classes:
- 
-SELECT s.full_name AS student_name, s.user_name AS student_username, c.class_name
-FROM Student s
-JOIN Class c ON s.class_id = c.class_id;
-
-
-
-SELECT s.full_name AS student_name, a.is_present
-FROM Student s
-JOIN Enrollment e ON s.student_id = e.student_id
-JOIN Attendance a ON e.enrollment_id = a.enrollment_id
-WHERE a.attendance_date = '2024-06-01';
-
-
-SELECT p.full_name AS parent_name, SUM(pm.amount) AS total_payment
-FROM Parent p
-JOIN Student s ON p.parent_id = s.parent_id
-JOIN Enrollment e ON s.student_id = e.student_id
-JOIN Payment pm ON e.enrollment_id = pm.enrollment_id
-GROUP BY p.full_name;
 
 
 -- DELETE DATA
+drop table if exists payment_history;
 DROP TABLE IF EXISTS Payment;
 DROP TABLE IF EXISTS Attendance;
 DROP TABLE IF EXISTS Enrollment;
 DROP TABLE IF EXISTS Parent;
 DROP TABLE IF EXISTS Student;
+DROP TABLE IF EXISTS class_completed_lesson;
 DROP TABLE IF EXISTS Class;
+DROP TABLE IF EXISTS teacher_paid;
 DROP TABLE IF EXISTS Teacher;
+drop table if exists account;
 DROP TABLE IF EXISTS Admin;
 
 
@@ -240,3 +187,170 @@ DROP TABLE IF EXISTS Admin;
 
 
 
+-- Insert data into Admin table
+INSERT INTO Admin (id, user_name, password) VALUES 
+('A001', 'admin1', 'password1');
+
+
+INSERT INTO account (id, user_name, password, user_type)
+VALUES
+    ('acc1', 'user1', 'pass1', 'admin'),
+    ('acc2', 'user2', 'pass2', 'teacher'),
+    ('acc3', 'user3', 'pass3', 'teacher'),
+    ('acc4', 'user4', 'pass4', 'teacher'),
+    ('acc5', 'user5', 'pass5', 'teacher'),
+    ('acc6', 'user6', 'pass6', 'teacher'),
+    ('acc7', 'user7', 'pass7', 'student'),
+    ('acc8', 'user8', 'pass8', 'student'),
+    ('acc9', 'user9', 'pass9', 'student'),
+    ('acc10', 'user10', 'pass10', 'student'), 
+    ('acc11', 'user11', 'pass11', 'student'),
+    ('acc12', 'user12', 'pass12', 'student'),
+    ('acc13', 'user13', 'pass13', 'student'),
+    ('acc14', 'user14', 'pass14', 'student'),
+    ('acc15', 'user15', 'pass15', 'student'),
+    ('acc16', 'user16', 'pass16', 'student'),
+    ('acc17', 'user17', 'pass17', 'parent'),
+    ('acc18', 'user18', 'pass18', 'parent'),
+    ('acc19', 'user19', 'pass19', 'parent'),
+    ('acc20', 'user20', 'pass20', 'parent'),
+    ('acc21', 'user21', 'pass21', 'parent'),
+    ('acc22', 'user22', 'pass22', 'parent'),
+    ('acc23', 'user23', 'pass23', 'parent'),
+    ('acc24', 'user24', 'pass24', 'parent'),
+    ('acc25', 'user25', 'pass25', 'parent'),
+    ('acc26', 'user26', 'pass26', 'parent');
+
+
+INSERT INTO Teacher (id, gender, mobile_phone, monthly_salary, home_address, account_status, full_name, date_of_birth, email, employee_role, account_id)
+VALUES
+    ('tch1', 'Male', '0987654321', 15000000, '123 Nguyen Van A, Hanoi', true, 'Nguyen Van A', '1980-05-10', 'tch1@example.com', 'Math Teacher', 'acc2'),
+    ('tch2', 'Female', '0981234567', 13000000, '456 Le Van B, Hanoi', true, 'Le Thi B', '1985-08-15', 'tch2@example.com', 'Science Teacher', 'acc3'),
+    ('tch3', 'Male', '0977123456', 14000000, '789 Tran Quoc C, Hanoi', true, 'Tran Van C', '1982-12-20', 'tch3@example.com', 'Physics Teacher', 'acc4'),
+    ('tch4', 'Female', '0968234567', 12000000, '234 Pham Thi D, Hanoi', true, 'Pham Thi D', '1987-04-25', 'tch4@example.com', 'English Teacher', 'acc5'),
+    ('tch5', 'Male', '0988654321', 16000000, '567 Hoang Quoc E, Hanoi', true, 'Hoang Van E', '1978-09-30', 'tch5@example.com', 'History Teacher', 'acc6');
+
+
+INSERT INTO teacher_paid (id, teacher_id, paid_date, amount)
+VALUES
+    ('tp1', 'tch1', '2024-01-05', 1500000),
+    ('tp2', 'tch2', '2024-02-10', 1300000),
+    ('tp3', 'tch3', '2024-03-15', 1400000),
+    ('tp4', 'tch4', '2024-01-20', 1200000),
+    ('tp5', 'tch5', '2024-02-25', 1600000),
+    ('tp6', 'tch1', '2024-03-05', 1500000),
+    ('tp7', 'tch2', '2024-01-10', 1300000),
+    ('tp8', 'tch3', '2024-02-15', 1400000),
+    ('tp9', 'tch4', '2024-03-20', 1200000),
+    ('tp10', 'tch5', '2024-04-25', 1600000);
+
+
+INSERT INTO Class (id, class_name, year, teacher_id, monthly_tuition_fee, time, expected_lessons)
+VALUES
+    ('cls1', 'Mathematics', 2024, 'tch1', 2000000, 'Morning', 16),
+    ('cls2', 'Science', 2024, 'tch2', 1800000, 'Afternoon', 14),
+    ('cls3', 'Physics', 2024, 'tch3', 1900000, 'Evening', 15),
+    ('cls4', 'English', 2024, 'tch4', 1700000, 'Morning', 12),
+    ('cls5', 'History', 2024, 'tch5', 2100000, 'Afternoon', 18),
+    ('cls6', 'Biology', 2024, 'tch1', 2200000, 'Evening', 20),
+    ('cls7', 'Chemistry', 2024, 'tch2', 2300000, 'Morning', 22),
+    ('cls8', 'Geography', 2024, 'tch3', 2400000, 'Afternoon', 24),
+    ('cls9', 'Literature', 2024, 'tch4', 2500000, 'Evening', 26),
+    ('cls10', 'Music', 2024, 'tch5', 2600000, 'Morning', 28);
+
+
+INSERT INTO class_completed_lesson (id, class_id, lesson_number)
+VALUES
+    ('ccl1', 'cls1', 12),
+    ('ccl2', 'cls2', 10),
+    ('ccl3', 'cls3', 11),
+    ('ccl4', 'cls4', 9),
+    ('ccl5', 'cls5', 14),
+    ('ccl6', 'cls6', 16),
+    ('ccl7', 'cls7', 18),
+    ('ccl8', 'cls8', 20),
+    ('ccl9', 'cls9', 22),
+    ('ccl10', 'cls10', 24);
+
+
+INSERT INTO Student (id, full_name, phone, email, gender, class_id, date_of_birth, date_joined, account_id)
+VALUES
+    ('std1', 'Nguyen Van An', '0987654321', 'std1@example.com', 'Male', 'cls1', '2008-03-15', '2024-01-01', 'acc7'),
+    ('std2', 'Le Thi Bao', '0981234567', 'std2@example.com', 'Female', 'cls2', '2009-06-20', '2024-02-02', 'acc8'),
+    ('std3', 'Tran Van Cuong', '0977123456', 'std3@example.com', 'Male', 'cls3', '2007-09-25', '2024-02-03', 'acc9'),
+    ('std4', 'Pham Thi Dung', '0968234567', 'std4@example.com', 'Female', 'cls4', '2010-12-30', '2024-02-04', 'acc10'),
+    ('std5', 'Hoang Van Tuan', '0988654321', 'std5@example.com', 'Male', 'cls5', '2006-05-05', '2024-03-05', 'acc11'),
+    ('std6', 'Nguyen Thi Lan', '0987654321', 'std6@example.com', 'Female', 'cls6', '2007-08-10', '2024-03-06', 'acc12'),
+    ('std7', 'Le Van Khanh', '0981234567', 'std7@example.com', 'Male', 'cls7', '2009-11-15', '2024-04-07', 'acc13'),
+    ('std8', 'Tran Thi Mai', '0977123456', 'std8@example.com', 'Female', 'cls8', '2008-02-20', '2024-05-08', 'acc14'),
+    ('std9', 'Pham Van Hoa', '0968234567', 'std9@example.com', 'Male', 'cls9', '2011-04-25', '2024-06-09', 'acc15'),
+    ('std10', 'Hoang Thi Thu', '0988654321', 'std10@example.com', 'Female', 'cls10', '2006-07-30', '2024-06-10', 'acc16');
+
+INSERT INTO Parent (id, full_name, email, phone, gender, student_id, account_id)
+VALUES
+    ('par1', 'Nguyen Van Anh', 'par1@example.com', '0987654321', 'Male', 'std1', 'acc17'),
+    ('par2', 'Le Thi Lan', 'par2@example.com', '0981234567', 'Female', 'std2', 'acc18'),
+    ('par3', 'Tran Van Hoang', 'par3@example.com', '0977123456', 'Male', 'std3', 'acc19'),
+    ('par4', 'Pham Thi Mai', 'par4@example.com', '0968234567', 'Female', 'std4', 'acc20'),
+    ('par5', 'Hoang Van Hung', 'par5@example.com', '0988654321', 'Male', 'std5', 'acc21'),
+    ('par6', 'Nguyen Thi Hien', 'par6@example.com', '0987654321', 'Female', 'std6', 'acc22'),
+    ('par7', 'Le Van Cuong', 'par7@example.com', '0981234567', 'Male', 'std7', 'acc23'),
+    ('par8', 'Tran Thi Ha', 'par8@example.com', '0977123456', 'Female', 'std8', 'acc24'),
+    ('par9', 'Pham Van Tien', 'par9@example.com', '0968234567', 'Male', 'std9', 'acc25'),
+    ('par10', 'Hoang Thi Bich', 'par10@example.com', '0988654321', 'Female', 'std10', 'acc26');
+
+
+INSERT INTO Enrollment (id, student_id, class_id, enrollment_date)
+VALUES
+    ('enr1', 'std1', 'cls1', '2024-01-01'),
+    ('enr2', 'std2', 'cls2', '2024-02-02'),
+    ('enr3', 'std3', 'cls3', '2024-03-03'),
+    ('enr4', 'std4', 'cls4', '2024-01-04'),
+    ('enr5', 'std5', 'cls5', '2024-02-05'),
+    ('enr6', 'std6', 'cls6', '2024-03-06'),
+    ('enr7', 'std7', 'cls7', '2024-01-07'),
+    ('enr8', 'std8', 'cls8', '2024-02-08'),
+    ('enr9', 'std9', 'cls9', '2024-03-09'),
+    ('enr10', 'std10', 'cls10', '2024-01-10');
+
+
+INSERT INTO Attendance (id, enrollment_id, attendance_date, is_present)
+VALUES
+    ('att1', 'enr1', '2024-01-01', true),
+    ('att2', 'enr2', '2024-02-02', true),
+    ('att3', 'enr3', '2024-02-03', true),
+    ('att4', 'enr4', '2024-02-04', true),
+    ('att5', 'enr5', '2024-03-15', true),
+    ('att6', 'enr6', '2024-04-06', true),
+    ('att7', 'enr7', '2024-05-07', true),
+    ('att8', 'enr8', '2024-04-08', true),
+    ('att9', 'enr9', '2024-01-09', true),
+    ('att10', 'enr10', '2024-02-10', true);
+
+
+INSERT INTO Payment (id, enrollment_id, amount, percentage_discount)
+VALUES
+    ('pay1', 'enr1', 2000000, 12),
+    ('pay2', 'enr2', 1800000, 20),
+    ('pay3', 'enr3', 1900000, 15),
+    ('pay4', 'enr4', 1700000, 10),
+    ('pay5', 'enr5', 2100000, 11),
+    ('pay6', 'enr6', 2200000, 24),
+    ('pay7', 'enr7', 2300000, 11),
+    ('pay8', 'enr8', 2400000, 10),
+    ('pay9', 'enr9', 2500000, 50),
+    ('pay10', 'enr10', 2600000, 70);
+
+
+INSERT INTO payment_history (id, payment_date, amount, payment_id, parent_id)
+VALUES
+    ('ph1', '2024-01-01', 2000000, 'pay1', 'par1'),
+    ('ph2', '2024-02-02', 1800000, 'pay2', 'par2'),
+    ('ph3', '2024-02-03', 1900000, 'pay3', 'par3'),
+    ('ph4', '2024-02-04', 1700000, 'pay4', 'par4'),
+    ('ph5', '2024-01-05', 2100000, 'pay5', 'par5'),
+    ('ph6', '2024-03-06', 2200000, 'pay6', 'par6'),
+    ('ph7', '2024-03-07', 2300000, 'pay7', 'par7'),
+    ('ph8', '2024-04-08', 2400000, 'pay8', 'par8'),
+    ('ph9', '2024-04-09', 2500000, 'pay9', 'par9'),
+    ('ph10', '2024-05-10', 2600000, 'pay10', 'par10');

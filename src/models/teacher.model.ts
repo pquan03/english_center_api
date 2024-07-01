@@ -16,7 +16,7 @@ const Teacher = sequelize.define('teacher', {
         allowNull: true
     },
     monthly_salary: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.FLOAT(10, 2),
         allowNull: true
     },
     home_address: {
@@ -45,14 +45,14 @@ const Teacher = sequelize.define('teacher', {
         type: DataTypes.STRING(50),
         allowNull: true
     },
-    user_name: {
-        type: DataTypes.STRING(50),
+    account_id: {
+        type: DataTypes.CHAR(50),
         allowNull: false,
-        unique: true
-    },
-    password: {
-        type: DataTypes.STRING(100),
-        allowNull: false
+        references: {
+            model: 'account',
+            key: 'id'
+        }
+    
     }
 }, {
     tableName: 'teacher',

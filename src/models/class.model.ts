@@ -12,7 +12,7 @@ import Student from "../models/student.model";
 //     FOREIGN KEY (teacher_id) REFERENCES Teacher(id)
 // );
 
-const Class = sequelize.define('Class', {
+const Class = sequelize.define('class', {
     id: {
         type: DataTypes.STRING,
         primaryKey: true,
@@ -41,7 +41,7 @@ const Class = sequelize.define('Class', {
         }
     },
 }, {
-    tableName: 'Class',
+    tableName: 'class',
     timestamps: false
 });
 

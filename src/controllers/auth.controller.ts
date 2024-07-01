@@ -6,6 +6,7 @@ import Admin from '../models/admin.model';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken'
 import { IDecoded, IReqAuth } from '../utils/interface';
+import Account from '../models/account.model';
 
 
 export default {
@@ -13,8 +14,8 @@ export default {
         const { user_name,  password } = req.body;
         try {
             const id = uuidv4().toString();
-            const hashedPassword = await bcrypt.hash(password, 10);
-            await Admin.create({id, user_name, password: hashedPassword });
+            // const hashedPassword = await bcrypt.hash(password, 10);
+            await Admin.create({id, user_name, password: password });
             res.status(200).json({ message: 'Admin created' });
         } catch(e: any) {
             console.log(e)
@@ -22,33 +23,14 @@ export default {
         }
     }, 
     login: async (req: Request, res: Response) => {
-        const { user_name, password, user_type } = req.body;
+        const { user_name, password } = req.body;
         console.log(req.body)
-        let User;
-
-        switch (user_type) {
-            case 'admin':
-              User = Admin;
-              break;
-            // case 'teacher':
-            //   User = Teacher;
-            //   break;
-            // case 'parent':
-            //   User = Parent;
-            //   break;
-            case 'student':
-              User = Student;
-              break;
-            default:
-              return res.status(400).json({ message: 'Invalid user type' });
-          }
-
         try {
-            const user = await User.findOne({ where: { user_name } });
+            const user = await Account.findOne({ where: { user_name } });
             if(!user) return res.status(400).json({ message: user_name + ' not found' }); 
             
-            const isMatch = await bcrypt.compare(password, user.dataValues['password']);
-            if(!isMatch) return res.status(400).json({ message: 'Invalid password' });
+            const isMatch = user.dataValues['password'] === password;
+            if(!isMatch) return res.status(400).json({ message: 'Incorrect password' });
 
             const accessToken = generateAccessToken({
                 id: user.dataValues['id'],

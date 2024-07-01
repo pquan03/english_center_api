@@ -1,21 +1,32 @@
 import Parent from '../models/parent.model';
 import Student from '../models/student.model';
 import { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
 export default  {
     createStudent: async(req: Request, res: Response) => {
-        const { first_name, last_name, birth_date, parent_id } = req.body;
         try {
-            const newStudent = await Student.create({ first_name, last_name, birth_date, parent_id });
+            const { full_name, user_name, password, class_id, date_joined } = req.body;
+            const id = uuidv4().toString();
+            const newStudent = await Student.create({
+                id,
+                full_name,
+                user_name,
+                password,
+                // class_id,
+                date_joined
+            });
             res.status(201).json(newStudent);
-        } catch(error: any) {
-            res.status(500).json({ message: error.message });
+        } catch (error: any) {
+            res.status(500).json({ error: error.message });
         }
     },
     getAllStudents: async(req: Request, res: Response) => {
         try {
-            const students = await Student.findAll();
-            res.json(students);
+            const students = await Student.findAll({
+                include: Parent
+            });
+            res.status(200).json(students);
         } catch (error: any) {
             res.status(500).json({ error: error.message });
         }
@@ -23,37 +34,44 @@ export default  {
     getStudentById: async(req: Request, res: Response) => {
         const { id } = req.params;
         try {
-            const student = await Student.findOne({
-                where: { id },
-                include: [
-                    { 
-                        model: Parent,
-                        attributes: ['full_name', 'email', 'phone']
-                    }
-                ]
-            })
-            res.json(student);
+            const { id } = req.params;
+            const student = await Student.findByPk(id, {
+                include: Parent
+            });
+            if (!student) {
+                return res.status(404).json({ error: "Student not found" });
+            }
+            res.status(200).json(student);
         } catch (error: any) {
             res.status(500).json({ error: error.message });
         }
     },
     updateStudent: async(req: Request, res: Response) => {
-        const { id } = req.params;
-        const { first_name, last_name, birth_date, parent_id } = req.body;
         try {
+            const { id } = req.params;
+            const { full_name, user_name, password, class_id, date_joined } = req.body;
             const student = await Student.findByPk(id);
-            if(!student) return res.status(400).json({ message: 'Student not found' });
-            await student.update({ first_name, last_name, birth_date, parent_id });
-            res.json({ message: 'Student updated' });
+            if (!student) {
+                return res.status(404).json({ error: "Student not found" });
+            }
+            await student.update({ full_name, user_name, password, class_id, date_joined });
+            res.status(200).json(student);
         } catch (error: any) {
             res.status(500).json({ error: error.message });
         }
     },
     deleteStudent: async(req: Request, res: Response) => {
-        const { id } = req.params;
         try {
-            await Student.destroy({ where: { id } });
-            res.json({ message: 'Student deleted' });
+            const { id } = req.params;
+            const student = await Student.findByPk(id);
+            if (!student) {
+                return res.status(404).json({ error: "Student not found" });
+            }
+            // delete parent first
+            const parent = await Parent.findOne({ where: { student_id: id } });
+            
+            await student.destroy();
+            res.status(200).json({ message: "Student deleted successfully" });
         } catch (error: any) {
             res.status(500).json({ error: error.message });
         }

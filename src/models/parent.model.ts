@@ -23,10 +23,15 @@ const Parent = sequelize.define('parent', {
         type: DataTypes.STRING(100),
         unique: true
       },
-      user_name: {
-        type: DataTypes.STRING(100),
-        unique: true,
-        allowNull: false
+      gender: {
+        type: DataTypes.STRING(10)
+      },
+      account_id: {
+        type: DataTypes.CHAR(50),
+        references: {
+          model: 'account',
+          key: 'id'
+        }
       },
       student_id: {
         type: DataTypes.CHAR(50),

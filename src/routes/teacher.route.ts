@@ -9,8 +9,13 @@ router.route('/')
     .get(teacherController.getTeachers);
 
 router.route('/:id')
-    .put(teacherController.updateTeacher)
+    .patch(teacherController.updateTeacher)
     .get(teacherController.getTeacherById)
     .delete(teacherController.deleteTeacher);
+
+router.get('/classes/:id',teacherController.getClassByTeacher);
+
+
+router.get('/')
 
 export default router;

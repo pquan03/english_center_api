@@ -14,14 +14,32 @@ const Student = sequelize.define('student', {
         type: DataTypes.STRING(100),
         allowNull: false
       },
-      user_name: {
-        type: DataTypes.STRING(100),
-        unique: true,
+      phone: {
+        type: DataTypes.STRING(20),
         allowNull: false
       },
-      password: {
-        type: DataTypes.STRING(255),
+      email: {
+        type: DataTypes.STRING(100),
         allowNull: false
+      },
+      gender: {
+        type: DataTypes.STRING(10),
+        allowNull: false
+      },
+      date_of_birth: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      date_joined: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      account_id: {
+        type: DataTypes.CHAR(50),
+        references: {
+          model: 'account',
+          key: 'id'
+        }
       },
       class_id: {
         type: DataTypes.CHAR(50),
@@ -29,7 +47,7 @@ const Student = sequelize.define('student', {
           model: 'class',
           key: 'id'
         }
-      }
+      }, 
 }, {
     tableName: 'student',
     timestamps: false

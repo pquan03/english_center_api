@@ -12,5 +12,7 @@ router.route('/:id')
     .get(classController.getClassById)
     .delete(classController.deleteClass)
 
+router.get('/records/all', classController.getClassRecord)
+
 
 export default router;

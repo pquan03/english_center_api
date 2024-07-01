@@ -18,9 +18,7 @@ const Payment = sequelize.define('payment', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false
     },
-    payment_date: {
-        type: DataTypes.DATE
-    }
+    
 }, {
     tableName: 'payment',
     timestamps: false

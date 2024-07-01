@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import student from "../models/student.model";
 import teacher from "../models/teacher.model";
 import sequelize from "sequelize";
+import ClassCompletedLesson from "../models/class_lesson.model";
 
 
 export default {
@@ -82,8 +83,6 @@ export default {
             if (updated) {
                 const updatedClass = await Class.findByPk(id);
                 res.status(200).json(updatedClass);
-            } else {
-                res.status(404).json({ message: "Class not found" });
             }
         } catch(e: any) {
             res.status(500).json({ message: e.message });
@@ -104,5 +103,42 @@ export default {
             res.status(500).json({ message: e.message });
         }
     }, 
+    getClassRecord: async(req: Request, res: Response) => {
+        try {
+            // Get all classes with teacher, completed lessons, total fee paid by students
+            const classRecords = await Class.findAll({
+                attributes: {
+                    include: [
+                        [sequelize.fn('SUM', sequelize.col('monthly_tuition_fee')), 'total_fee'],
+                    ]
+                },
+                include: [
+                    { 
+                        model: teacher, 
+                        attributes: ['full_name'],
+                     },
+                ],
+                group: ['class.id', 'teacher.id'],
+            });
+            classRecords.map(async (classRecord: any) => {
+
+                // Get number of students in class
+                const studentCount = await student.count({
+                    where: { class_id: classRecord.dataValues['id'] }
+                });
+
+                console.log(studentCount);
+                
+                return {
+                    ...classRecord.dataValues,
+                    student_count: studentCount
+                }
+            })
+
+            res.status(200).json(classRecords);
+        } catch(e: any) {
+            res.status(500).json({ message: e.message });
+        }
+    }
 }
 
